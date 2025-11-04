@@ -31,7 +31,7 @@ class MyHomePage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       // Body halaman dengan padding di sekelilingnya.
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         // Menyusun widget secara vertikal dalam sebuah kolom.
         child: Column(
@@ -77,11 +77,9 @@ class MyHomePage extends StatelessWidget {
                     crossAxisCount: 3,
                     // Agar grid menyesuaikan tinggi kontennya.
                     shrinkWrap: true,
-
+                    physics: const NeverScrollableScrollPhysics(),
                     // Menampilkan ItemCard untuk setiap item dalam list items.
-                    children: items.map((ItemHomepage item) {
-                      return ItemCard(item);
-                    }).toList(),
+                    children: items.map((item) => ItemCard(item)).toList(),
                   ),
                 ],
               ),

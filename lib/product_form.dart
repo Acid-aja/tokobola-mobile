@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tokobola/widgets/left_drawer.dart';
 
@@ -126,7 +127,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
-                  value: _category,
+                  initialValue: _category,
                   items: _categories
                       .map(
                         (cat) => DropdownMenuItem(
@@ -182,7 +183,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
+                      backgroundColor: WidgetStateProperty.all(
                           Theme.of(context).colorScheme.primary),
                     ),
                     onPressed: () {
@@ -215,18 +216,18 @@ class _ProductFormPageState extends State<ProductFormPage> {
                                   child: const Text('OK'),
                                   onPressed: () {
                                     Navigator.pop(context);
+                                    
+                                    _formKey.currentState!.reset();
+                                    setState(() {
+                                      _category = "Jersey";
+                                      _isFeatured = false;
+                                    });
                                   },
                                 ),
                               ],
                             );
                           },
                         );
-                        _formKey.currentState!.reset();
-                        // Reset nilai state
-                        setState(() {
-                          _category = "Jersey";
-                          _isFeatured = false;
-                        });
                       }
                     },
                     child: const Text(

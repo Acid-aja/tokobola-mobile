@@ -86,5 +86,50 @@ backgroundColor: Theme.of(context).colorScheme.primary,
 
 
 ---
+# Tugas 8
+## 🔄 Perbedaan Navigator.push() vs Navigator.pushReplacement()
+Dalam Flutter, `Navigator` mengelola tumpukan (stack) halaman. Perbedaan utama antara kedua metode ini terletak pada bagaimana mereka berinteraksi dengan stack tersebut:
+1.  **`Navigator.push()`**
+    * **Apa yang dilakukan:** Mendorong halaman baru ke *atas* tumpukan. Halaman sebelumnya tetap ada di tumpukan, tepat di bawah halaman baru.
+    * **Implikasi:** Pengguna dapat menekan tombol "kembali" (baik fisik atau di `AppBar`) untuk kembali ke halaman sebelumnya.
+    * **Kapan digunakan di TokoBola:** Metode ini digunakan di `lib/menu.dart` saat menekan tombol "Create Product". Ini adalah pilihan yang tepat karena pengguna mungkin ingin *kembali* ke halaman menu utama setelah selesai (atau batal) mengisi form.
+
+2.  **`Navigator.pushReplacement()`**
+    * **Apa yang dilakukan:** Mendorong halaman baru ke tumpukan dan *membuang* halaman saat ini dari tumpukan. Halaman sebelumnya diganti oleh halaman baru.
+    * **Implikasi:** Pengguna tidak dapat menekan tombol "kembali" untuk kembali ke halaman yang baru saja mereka tinggalkan, karena halaman tersebut sudah tidak ada di tumpukan.
+    * **Kapan digunakan di TokoBola:** Metode ini digunakan di `lib/widgets/left_drawer.dart`. Ini sangat ideal untuk navigasi via *drawer*. Saat pengguna beralih dari "Halaman Utama" ke "Tambah Produk" (atau sebaliknya) melalui *drawer*, kita tidak ingin tumpukan halaman menjadi bertambah. `pushReplacement` memastikan bahwa kita berpindah halaman tanpa membuat tumpukan navigasi yang membingungkan.
+
+---
+## 🏗️ Pemanfaatan Hierarki Widget (Padding, SingleChildScrollView, ListView)
+Hierarki widget ini adalah fondasi untuk menciptakan struktur visual yang konsisten di seluruh aplikasi TokoBola:
+* **`Scaffold`**: Digunakan sebagai widget *root* untuk setiap halaman, baik di `lib/menu.dart` maupun `lib/product_form.dart`. `Scaffold` menyediakan "kerangka" standar yang memiliki slot untuk `appBar`, `body`, dan `drawer`.
+* **`AppBar`**: Ditempatkan di properti `appBar` milik `Scaffold`. Dengan menetapkan `AppBar` di setiap halaman, kita memastikan *header* aplikasi selalu terlihat sama, memiliki skema warna yang konsisten (biru dengan teks putih), dan tombol menu (hamburger icon) otomatis muncul jika ada `Drawer`.
+* **`Drawer`**: Ditempatkan di properti `drawer` milik `Scaffold`. Dengan memanggil widget `LeftDrawer` yang sama di setiap halaman, kita menjamin bahwa menu navigasi utama aplikasi selalu identik dan mudah diakses dari mana saja.
+---
+## 🎨 Kelebihan Layout Widget pada Form (Padding, SingleChildScrollView, ListView)
+Widget layout ini sangat krusial dalam mendesain form yang fungsional dan rapi:
+* **`Padding`**
+    * **Kelebihan:** Memberikan "ruang napas" (whitespace) di sekitar elemen UI. Tanpa `Padding`, elemen-elemen form akan menempel satu sama lain dan menempel di tepi layar, membuatnya terlihat sesak dan sulit dibaca.
+    * **Contoh di Aplikasi:** Di `lib/product_form.dart`, setiap `TextFormField` dibungkus dalam `Padding(padding: const EdgeInsets.all(8.0), ...)`. Ini menciptakan jarak 8 piksel yang konsisten di sekeliling setiap kotak input.
+
+* **`SingleChildScrollView`**
+    * **Kelebihan:** Ini adalah widget fundamental untuk form. Form seringkali memiliki banyak *field* yang total panjangnya melebihi tinggi layar, terutama saat *keyboard virtual* muncul. `SingleChildScrollView` membungkus konten form dan secara otomatis memungkinkan pengguna untuk *menggulir* (scroll) ke atas dan ke bawah, mencegah *overflow error* (UI terpotong atau error kuning-hitam).
+    * **Contoh di Aplikasi:** Di `lib/product_form.dart`, seluruh `Form` (yang berisi `Column` dari semua `TextFormField`) dibungkus sebagai *child* dari `SingleChildScrollView`.
+
+* **`ListView`**
+    * **Kelebihan:** Mirip dengan `SingleChildScrollView`, `ListView` menyediakan kemampuan *scrolling*. Namun, ia secara spesifik dirancang untuk menyusun *daftar* item secara efisien. Ini adalah widget standar untuk membuat daftar menu.
+    * **Contoh di Aplikasi:** `ListView` digunakan di `lib/widgets/left_drawer.dart` untuk menyusun `DrawerHeader` dan `ListTile` (menu "Halaman Utama" dan "Tambah Produk") secara vertikal di dalam *drawer*.
+
+---
+## 🖌️ Penyesuaian Warna Tema untuk Identitas Visual
+Identitas visual yang konsisten dicapai dengan mendefinisikan tema warna di satu tempat terpusat, yaitu di dalam `MaterialApp` pada file `lib/main.dart`.
+
+1.  **Definisi Tema:** Di `lib/main.dart`, properti `theme` dari `MaterialApp` diatur ke `ThemeData()`.
+2.  **Penetapan Warna Primer:** Warna utama (brand) aplikasi ditetapkan menggunakan `colorScheme`. Secara spesifik, kode `ColorScheme.fromSwatch(primarySwatch: Colors.blue)` memberi tahu Flutter untuk menggunakan palet warna `Colors.blue` sebagai dasar tema.
+3.  **Penggunaan Konsisten:** Widget lain di seluruh aplikasi (seperti di `lib/menu.dart` dan `lib/product_form.dart`) tidak menetapkan warna biru secara manual. Sebaliknya, mereka mengambil warna ini secara dinamis dari tema menggunakan `Theme.of(context).colorScheme.primary`.
+
+Keuntungan terbesarnya adalah jika "TokoBola" memutuskan untuk *rebranding* menjadi warna hijau, kita hanya perlu mengubah `Colors.blue` menjadi `Colors.green` di `main.dart`, dan seluruh aplikasi (termasuk `AppBar` dan tombol) akan otomatis ikut berubah warna.
+
+---
 ## ✨ Credit
 Program ini dibuat oleh Izzudin Abdul Rasyid - 2406495786 - PBP D

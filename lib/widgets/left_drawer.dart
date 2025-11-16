@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tokobola/screens/menu.dart';
 import 'package:tokobola/screens/product_form.dart'; // Impor halaman form
-import 'package:tokobola/screens/product_entry_list.dart';
+import 'package:tokobola/screens/product_entry_list.dart'; // Impor ini sekarang digunakan
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -60,6 +60,19 @@ class LeftDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => const ProductFormPage()),
+              );
+            },
+          ),
+          // ListTile BARU ditambahkan di sini
+          ListTile(
+            leading: const Icon(Icons.list_alt),
+            title: const Text('Daftar Produk'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProductEntryListPage(),
+                ),
               );
             },
           ),

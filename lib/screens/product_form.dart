@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tokobola/screens/menu.dart';
 import 'package:tokobola/widgets/left_drawer.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'dart:convert';
+import 'package:provider/provider.dart';
+
 
 class ProductFormPage extends StatefulWidget {
   const ProductFormPage({super.key});
@@ -27,6 +32,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -105,16 +111,16 @@ class _ProductFormPageState extends State<ProductFormPage> {
                     labelText: "Deskripsi Produk",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0),
-                    )
+                    ),
                   ),
                   onChanged: (value) => _description = value,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Deskripsi tidak boleh kosong";
-                    } 
+                    }
                     return null;
                   },
-                ), 
+                ),
               ),
               // ==== Kategori ====
               Padding(
@@ -129,10 +135,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   initialValue: _category,
                   items: _categories
                       .map(
-                        (cat) => DropdownMenuItem(
-                          value: cat,
-                          child: Text(cat),
-                        ),
+                        (cat) => DropdownMenuItem(value: cat, child: Text(cat)),
                       )
                       .toList(),
                   onChanged: (newValue) =>
@@ -183,7 +186,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all(
-                          Theme.of(context).colorScheme.primary),
+                        Theme.of(context).colorScheme.primary,
+                      ),
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
@@ -192,12 +196,10 @@ class _ProductFormPageState extends State<ProductFormPage> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title:
-                                  const Text('Produk berhasil tersimpan'),
+                              title: const Text('Produk berhasil tersimpan'),
                               content: SingleChildScrollView(
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text('Nama: $_name'),
                                     Text('Harga: $_price'),
@@ -213,14 +215,58 @@ class _ProductFormPageState extends State<ProductFormPage> {
                               actions: [
                                 TextButton(
                                   child: const Text('OK'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    
-                                    _formKey.currentState!.reset();
-                                    setState(() {
-                                      _category = "Jersey";
-                                      _isFeatured = false;
-                                    });
+                                  // Ganti dengan kode ini
+                                  onPressed: () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      // TODO: Ganti URL ini dengan URL di backend Django tokobola Anda
+                                      // Misalnya: "http://localhost:8000/create-product-flutter/"
+                                      // Pastikan URL-nya benar (10.0.2.2 untuk emulator Android jika Django di localhost)
+
+                                      final response = await request.postJson(
+                                        "http://localhost:8000/create-flutter/", // <-- PASTIKAN URL INI BENAR
+                                        jsonEncode({
+                                          'name': _name,
+                                          'price': _price,
+                                          'description': _description,
+                                          'thumbnail': _thumbnail,
+                                          'category': _category,
+                                          'is_featured': _isFeatured,
+                                          // Pastikan nama field ini (name, price, dll.)
+                                          // sama persis dengan yang ada di model Product Django Anda
+                                        }),
+                                      );
+
+                                      if (context.mounted) {
+                                        if (response['status'] == 'success') {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                "Produk baru berhasil disimpan!",
+                                              ),
+                                            ),
+                                          );
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MyHomePage(),
+                                            ), // Ganti MyHomePage() jika perlu
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                "Terjadi kesalahan, silakan coba lagi.",
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    }
                                   },
                                 ),
                               ],

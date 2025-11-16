@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:football_news/models/news_entry.dart';
+import 'package:tokobola/models/product_entry.dart'; // Ganti dari football_news dan news_entry
 
-class NewsDetailPage extends StatelessWidget {
-  final NewsEntry news;
+class ProductDetailPage extends StatelessWidget { // Ganti nama kelas
+  final ProductEntry news; // Ganti NewsEntry
 
-  const NewsDetailPage({super.key, required this.news});
+  const ProductDetailPage({super.key, required this.news}); // Ganti nama kelas
 
-  String _formatDate(DateTime date) {
-    // Simple date formatter without intl package
-    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return '${date.day} ${months[date.month - 1]} ${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-  }
+  // Fungsi _formatDate dihapus karena ProductEntry tidak punya createdAt
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('News Detail'),
+        title: const Text('Product Detail'), // Ganti judul
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
       ),
@@ -67,7 +62,7 @@ class NewsDetailPage extends StatelessWidget {
 
                   // Title
                   Text(
-                    news.title,
+                    news.name, // Ganti dari .title
                     style: const TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
@@ -86,7 +81,7 @@ class NewsDetailPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Text(
-                          news.category.toUpperCase(),
+                          news.categoryDisplay.toUpperCase(), // Ganti dari .category
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -94,14 +89,7 @@ class NewsDetailPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Text(
-                        _formatDate(news.createdAt),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
+                      // Teks tanggal dihapus
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -112,7 +100,7 @@ class NewsDetailPage extends StatelessWidget {
                       Icon(Icons.visibility, size: 16, color: Colors.grey[600]),
                       const SizedBox(width: 4),
                       Text(
-                        '${news.newsViews} views',
+                        '${news.views} views', // Ganti dari .newsViews
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[600],
@@ -125,7 +113,7 @@ class NewsDetailPage extends StatelessWidget {
 
                   // Full content
                   Text(
-                    news.content,
+                    news.description, // Ganti dari .content
                     style: const TextStyle(
                       fontSize: 16.0,
                       height: 1.6,

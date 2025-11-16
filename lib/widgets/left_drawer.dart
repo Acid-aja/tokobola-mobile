@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tokobola/menu.dart';
-import 'package:tokobola/product_form.dart'; // Impor halaman form
+import 'package:tokobola/screens/menu.dart';
+import 'package:tokobola/screens/product_form.dart'; // Impor halaman form
+import 'package:tokobola/screens/product_entry_list.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});

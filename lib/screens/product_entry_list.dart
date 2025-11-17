@@ -69,14 +69,14 @@ class _ProductEntryListPageState extends State<ProductEntryListPage> { // Ganti 
                       ..hideCurrentSnackBar()
                       ..showSnackBar(
                         SnackBar(
-                          content: Text("You clicked on ${snapshot.data![index].name}"), // Ganti .title ke .name
+                          content: Text("You clicked on ${snapshot.data![index].name}"), 
                         ),
                       );
                     // Navigasi ke halaman detail
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProductDetailPage(news: snapshot.data![index]), // Ganti NewsDetailPage
+                        builder: (context) => ProductDetailPage(news: snapshot.data![index]), 
                       ),
                     );
                   },

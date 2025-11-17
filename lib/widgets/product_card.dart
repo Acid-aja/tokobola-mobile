@@ -16,8 +16,10 @@ class ItemCard extends StatelessWidget {
       // Menentukan warna latar belakang dari tema aplikasi.
       color: item.color,
       // Membuat sudut kartu melengkung.
-      borderRadius: BorderRadius.circular(12),
-
+      
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: Colors.grey[800]!), 
+      ),
       child: InkWell(
         // Aksi ketika kartu ditekan.
         onTap: () {

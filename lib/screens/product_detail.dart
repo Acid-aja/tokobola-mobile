@@ -12,9 +12,7 @@ class ProductDetailPage extends StatelessWidget { // Ganti nama kelas
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Product Detail'), // Ganti judul
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
+        title: const Text('Product Detail'), 
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -77,7 +75,7 @@ class ProductDetailPage extends StatelessWidget { // Ganti nama kelas
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10.0, vertical: 4.0),
                         decoration: BoxDecoration(
-                          color: Colors.indigo.shade100,
+                          color: Colors.red[600],
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Text(
@@ -85,7 +83,7 @@ class ProductDetailPage extends StatelessWidget { // Ganti nama kelas
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Colors.indigo.shade700,
+                            color: Colors.white,
                           ),
                         ),
                       ),

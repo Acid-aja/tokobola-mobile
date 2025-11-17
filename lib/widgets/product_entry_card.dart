@@ -20,9 +20,9 @@ class ProductEntryCard extends StatelessWidget {
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
-            side: BorderSide(color: Colors.grey.shade300),
+            side: BorderSide(color: const Color.fromARGB(255, 144, 130, 130)),
           ),
-          elevation: 2,
+          elevation: 0,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -76,7 +76,7 @@ class ProductEntryCard extends StatelessWidget {
                   const Text(
                     'Featured',
                     style: TextStyle(
-                      color: Colors.amber,
+                      color: Colors.yellow,
                       fontWeight: FontWeight.bold
                     ),
                   ),

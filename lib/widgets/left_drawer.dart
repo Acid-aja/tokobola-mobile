@@ -15,7 +15,7 @@ class LeftDrawer extends StatelessWidget {
           const DrawerHeader(
             decoration: BoxDecoration(
               color: Colors
-                  .blue, // Sesuaikan dengan warna AppBar
+                  .red, // Sesuaikan dengan warna AppBar
             ),
             child: Column(
               children: [

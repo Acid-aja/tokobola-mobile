@@ -42,7 +42,7 @@ class ProductEntry {
         description: json["description"],
         category: json["category"],
         categoryDisplay: json["category_display"],
-        thumbnail: json["thumbnail"],
+        thumbnail: json["thumbnail"] ?? "",
         views: json["views"],
         isFeatured: json["is_featured"],
         userId: json["user_id"],

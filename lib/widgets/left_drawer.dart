@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tokobola/screens/menu.dart';
-import 'package:tokobola/screens/product_form.dart'; // Impor halaman form
-import 'package:tokobola/screens/product_entry_list.dart'; // Impor ini sekarang digunakan
+import 'package:tokobola/screens/product_form.dart'; 
+import 'package:tokobola/screens/product_entry_list.dart'; 
+import 'package:tokobola/screens/my_product_list.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -72,6 +73,18 @@ class LeftDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => const ProductEntryListPage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.shopping_bag_rounded),
+            title: const Text('Produk Saya'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MyProductListPage(),
                 ),
               );
             },

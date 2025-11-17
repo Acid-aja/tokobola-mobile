@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:tokobola/models/product_entry.dart'; // Ganti dari football_product dan product_entry
+import 'package:tokobola/models/product_entry.dart'; 
 
-class ProductEntryCard extends StatelessWidget { // Ganti nama kelas
-  final ProductEntry product; // Ganti productEntry
+class ProductEntryCard extends StatelessWidget { 
+  final ProductEntry product;
   final VoidCallback onTap;
 
-  const ProductEntryCard({ // Ganti nama kelas
+  const ProductEntryCard({ 
     super.key,
     required this.product,
     required this.onTap,
@@ -48,7 +48,7 @@ class ProductEntryCard extends StatelessWidget { // Ganti nama kelas
 
                 // Title
                 Text(
-                  product.name, // Ganti dari .title
+                  product.name, 
                   style: const TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
@@ -62,9 +62,9 @@ class ProductEntryCard extends StatelessWidget { // Ganti nama kelas
 
                 // Content preview
                 Text(
-                  product.description.length > 100 // Ganti dari .content
-                      ? '${product.description.substring(0, 100)}...' // Ganti dari .content
-                      : product.description, // Ganti dari .content
+                  product.description.length > 100
+                      ? '${product.description.substring(0, 100)}...' 
+                      : product.description, 
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(color: Colors.black54),

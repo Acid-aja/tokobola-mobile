@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tokobola/screens/menu.dart';
 import 'package:tokobola/screens/product_entry_list.dart';
 import 'package:tokobola/screens/product_form.dart';
-
+import 'package:tokobola/screens/my_product_list.dart';
 
 class ItemCard extends StatelessWidget {
   // menampilkan kartu dengan ikon dan nama
@@ -42,6 +42,12 @@ class ItemCard extends StatelessWidget {
               context, 
               MaterialPageRoute(
                 builder:(context) =>  const ProductEntryListPage()));
+          }
+          if (item.name == "My Products") {
+            Navigator.push(
+              context, 
+              MaterialPageRoute(
+                builder:(context) =>  const MyProductListPage()));
           }
         },
         // Container untuk menyimpan Icon dan Text

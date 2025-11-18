@@ -131,5 +131,112 @@ Identitas visual yang konsisten dicapai dengan mendefinisikan tema warna di satu
 Keuntungan terbesarnya adalah jika "TokoBola" memutuskan untuk *rebranding* menjadi warna hijau, kita hanya perlu mengubah `Colors.blue` menjadi `Colors.green` di `main.dart`, dan seluruh aplikasi (termasuk `AppBar` dan tombol) akan otomatis ikut berubah warna.
 
 ---
+# Tugas 9
+
+## 🧩 Mengapa Kita Perlu Membuat Model Dart untuk JSON?
+Ketika Flutter berkomunikasi dengan backend Django, data dikirim dalam format JSON. Membuat model Dart sangat penting karena:
+
+* `Validasi Tipe Data` : Menentukan tipe setiap field (String, int, double, dll) sehingga error runtime berkurang.  
+* `Null-Safety` : Model memastikan field wajib tidak null dan sesuai aturan Dart modern.  
+* `Maintainability` : Jika struktur backend berubah, kita cukup memperbarui model → tidak perlu ubah seluruh aplikasi.  
+* `Parsing Konsisten` : Fungsi `fromJson()` dan `toJson()` membuat data mudah dikelola dan rapi.
+
+### ⚠️ Jika Hanya Menggunakan Map<String, dynamic>
+* Rawan error tipe data  
+* Rawan null & `NoSuchMethodError`  
+* Kode lebih berantakan  
+* Validasi tersebar di banyak tempat  
+
+---
+
+## 🌐 Fungsi Package `http` dan `CookieRequest`
+
+### 📦 http
+* Request HTTP biasa (GET/POST)  
+* Tidak menyimpan cookie  
+* Cocok untuk API publik atau endpoint non-auth  
+
+### 🍪 CookieRequest (pbp_django_auth)
+* Menyimpan cookie session Django otomatis  
+* Digunakan untuk login dan request authenticated  
+* Mendukung mekanisme autentikasi berbasis session Django  
+
+### 🔍 Perbedaan Utama
+| Aspek | http | CookieRequest |
+|-------|------|----------------|
+| Session login | ❌ Tidak | ✔️ Ya |
+| Menyimpan cookie otomatis | ❌ Tidak | ✔️ Ya |
+| Cocok untuk | API publik | Django Auth |
+
+---
+
+## 🔁 Mengapa CookieRequest Harus Dibagikan ke Semua Komponen?
+Karena session login harus **konsisten** di seluruh aplikasi.
+
+* Jika membuat instance baru → session hilang  
+* User dianggap belum login  
+* Request authenticated akan gagal  
+
+Dengan **Provider**, CookieRequest dapat:
+* Digunakan di semua halaman  
+* Mengecek status login  
+* Mengirim request protected  
+* Melakukan logout dengan benar  
+
+---
+
+## 🔌 Konfigurasi Flutter ↔ Django
+
+### 1️⃣ Tambahkan `10.0.2.2` ke ALLOWED_HOSTS
+Android emulator menggunakan alamat ini untuk mengakses komputer host.
+
+### 2️⃣ Aktifkan CORS
+Django harus mengizinkan akses dari aplikasi Flutter.
+
+### 3️⃣ Atur Cookie dan SameSite
+```python
+SESSION_COOKIE_SAMESITE = None
+SESSION_COOKIE_SECURE = False
+```
+### 4️⃣ Tambahkan Permission Internet di Android
+```python
+<uses-permission android:name="android.permission.INTERNET" />
+```
+Jika salah konfigurasi → cookie tidak terkirim → login selalu gagal.
+
+---
+
+## 🔄 Mekanisme Pengiriman Data Flutter → Django → Flutter
+1. User mengisi input di Flutter
+2. Flutter mengirim request(POST/GET)
+3. Django memvalidasi dan menyimpan ke database
+4. Django mengirim response JSON
+5. Flutter mengubah JSON menjadi model DART
+6. UI menampilkan data melalui widget
+   
+---
+
+## 🔐 Mekanisme Autentikasi (Login → Register → Logout)
+### 🔹 Register
+1. Flutter mengirim data akun ke Django.
+2. Django membuat user baru.
+3. Flutter menampilkan hasil (sukses/gagal).
+
+### 🔹 Login
+1. Flutter memanggil `cookieRequest.login()`.
+2. Django memverifikasi kredensial.
+3. Django mengirim cookie session.
+4. `CookieRequest` menyimpan cookie tersebut.
+5. Flutter mengarahkan user ke halaman utama.
+
+### 🔹 Akses Setelah Login
+- Semua request selanjutnya menggunakan instance `CookieRequest` yang sama.
+
+### 🔹 Logout
+1. Flutter memanggil `cookieRequest.logout()`.
+2. Django menghapus session.
+3. Flutter diarahkan kembali ke halaman login.
+
+---
 ## ✨ Credit
 Program ini dibuat oleh Izzudin Abdul Rasyid - 2406495786 - PBP D

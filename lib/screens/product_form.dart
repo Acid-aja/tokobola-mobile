@@ -15,7 +15,7 @@ class ProductFormPage extends StatefulWidget {
 
 class _ProductFormPageState extends State<ProductFormPage> {
   final _formKey = GlobalKey<FormState>();
-  String _name = "";
+  String _name = ""; 
   int _price = 0;
   String _description = "";
   String _thumbnail = "";

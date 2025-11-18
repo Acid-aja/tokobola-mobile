@@ -238,5 +238,191 @@ Jika salah konfigurasi → cookie tidak terkirim → login selalu gagal.
 3. Flutter diarahkan kembali ke halaman login.
 
 ---
+## ✅ Step-by-Step implementasi
+Berikut adalah langkah-langkah detail mengenai bagaimana saya mengimplementasikan fitur registrasi, login, model kustom, daftar item, detail item, dan filter item berdasarkan pengguna yang login pada proyek TokoBola.
+
+## 1. Integrasi Autentikasi (Login & Register)
+
+Untuk menghubungkan sistem autentikasi Django dengan Flutter, saya menggunakan *package* `pbp_django_auth` dan `provider`.
+
+### A. Konfigurasi CookieRequest Global
+Agar status login (session/cookie) dapat dipertahankan di seluruh aplikasi, saya menyediakan instance `CookieRequest` ke seluruh *widget tree* menggunakan `Provider` di `main.dart`.
+
+**File:** `lib/main.dart`
+```dart
+return Provider(
+  create: (_) {
+    CookieRequest request = CookieRequest();
+    return request;
+  },
+  child: MaterialApp(
+    // ... konfigurasi tema dan routing
+  ),
+);
+```
+### B. Implementasi Fitur Registrasi
+Saya membuat halaman form yang mengambil input username, password, dan confirm password. Data ini dikirim ke endpoint Django /auth/register/ menggunakan metode postJson.
+
+File: lib/screens/register.dart
+
+Langkah: Mengambil input dari TextFormField.
+
+Logika: Mengirim data JSON ke backend.
+
+```Dart
+
+final response = await request.postJson(
+    "http://localhost:8000/auth/register/",
+    jsonEncode({
+      "username": username,
+      "password1": password1,
+      "password2": password2,
+    }));
+```
+Feedback: Jika status success, menampilkan SnackBar dan navigasi ke halaman Login.
+
+### C. Implementasi Halaman Login
+Mirip dengan registrasi, halaman login mengirim kredensial ke endpoint /auth/login/. Fungsi request.login() digunakan karena pustaka ini secara otomatis menangani penyimpanan cookie sesi.
+
+File: lib/screens/login.dart
+
+```Dart
+
+final response = await request.login(
+  "http://localhost:8000/auth/login/",
+  {'username': username, 'password': password},
+);
+
+if (request.loggedIn) {
+    // Navigasi ke MyHomePage jika berhasil
+    Navigator.pushReplacement(context, ...);
+}
+```
+## 2. Model Kustom (ProductEntry)
+Saya membuat model Dart untuk memetakan data JSON yang dikirim oleh Django. Ini memastikan tipe data (Type Safety) terjaga dan memudahkan akses properti.
+
+File: lib/models/product_entry.dart 
+Saya menyesuaikan field model dengan struktur model Django proyek saya, yang mencakup: name, price, description, category, thumbnail, isFeatured, dll.
+
+```Dart
+
+class ProductEntry {
+    String id;
+    String name;
+    int price;
+    String description;
+    String category;
+    String categoryDisplay;
+    String thumbnail;
+    int views;
+    bool isFeatured;
+    int userId;
+    String userUsername;
+
+    // Constructor dan Factory fromJson...
+    factory ProductEntry.fromJson(Map<String, dynamic> json) => ProductEntry(
+        id: json["id"],
+        name: json["name"],
+        price: json["price"],
+        // ... mapping atribut lainnya
+    );
+}
+```
+## 3. Halaman Daftar Item (Semua Produk)
+Saya membuat halaman untuk menampilkan semua produk yang diambil dari endpoint /json/ (atau endpoint publik yang relevan).
+
+File: lib/screens/product_entry_list.dart
+
+Langkah-langkah:
+Fetching Data: Menggunakan request.get untuk mengambil data dari endpoint Django.
+
+Parsing Data: Mengubah respon JSON menjadi list objek ProductEntry.
+
+```Dart
+
+Future<List<ProductEntry>> fetchProducts(CookieRequest request) async {
+    final response = await request.get('http://localhost:8000/json/');
+    // ... loop data dan konversi ke ProductEntry
+    return listNews;
+}
+```
+Menampilkan Data: Menggunakan FutureBuilder untuk menangani status loading. Jika data ada, saya menggunakan ListView.builder untuk me-render widget ProductEntryCard.
+
+## 4. Card Item & Atribut yang Ditampilkan
+Setiap item dalam daftar ditampilkan menggunakan widget kartu kustom.
+
+File: lib/widgets/product_entry_card.dart
+
+Saya menampilkan atribut berikut pada kartu sesuai spesifikasi:
+
+- Thumbnail: Ditampilkan menggunakan Image.network (dengan proxy URL jika gambar lokal Django).
+- Name & Category: Judul dan kategori produk.
+- Description: Cuplikan deskripsi 
+- Featured Status: Indikator jika produk adalah unggulan.
+
+```Dart
+
+// Menampilkan potongan deskripsi
+Text(
+  product.description.length > 100
+      ? '${product.description.substring(0, 100)}...' 
+      : product.description, 
+  // ... styling
+),
+```
+## 5. Halaman Detail Item
+Halaman ini menampilkan seluruh informasi detail dari sebuah produk.
+
+File: lib/screens/product_detail.dart
+
+Langkah-langkah:
+Navigasi: Pada ProductEntryCard, saya menambahkan fungsi onTap yang melakukan navigasi Navigator.push ke ProductDetailPage dengan mengirimkan objek ProductEntry sebagai parameter.
+
+```Dart
+
+// Di file lib/widgets/product_entry_card.dart
+onTap: onTap, // Callback dari parent widget
+
+// Di file lib/screens/product_entry_list.dart
+onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ProductDetailPage(news: snapshot.data![index]), 
+    ),
+  );
+},
+```
+Menampilkan Data Lengkap: Di halaman detail, saya menampilkan seluruh atribut:
+
+- Gambar Thumbnail Besar.
+- Nama Produk (Title).
+- Harga, Kategori, Views.
+- Deskripsi lengkap (textAlign.justify).
+
+Tombol Kembali: Widget AppBar pada Scaffold secara otomatis menyediakan tombol "Back" (panah kiri) ketika halaman di-push ke stack navigasi, sehingga pengguna bisa kembali ke daftar item.
+
+## 6. Filter Item (My Products)
+Fitur ini hanya menampilkan produk yang dibuat oleh pengguna yang sedang login (User-Associated Items).
+
+File: lib/screens/my_product_list.dart
+
+Langkah-langkah:
+Endpoint Khusus: Saya menggunakan endpoint Django yang berbeda, yaitu /my-products-flutter/. Di sisi server (Django), endpoint ini melakukan filter query berdasarkan request.user.
+
+Fetching Data:
+
+```Dart
+
+Future<List<ProductEntry>> fetchMyProducts(CookieRequest request) async {
+    final response = await request.get(
+      'http://localhost:8000/my-products-flutter/',
+    );
+    // ... parsing data
+}
+```
+Tampilan: Struktur tampilannya sama dengan halaman daftar semua produk, menggunakan FutureBuilder dan ListView.builder, namun datanya spesifik milik pengguna yang login.
+
+---
 ## ✨ Credit
 Program ini dibuat oleh Izzudin Abdul Rasyid - 2406495786 - PBP D
